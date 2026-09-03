@@ -6,17 +6,53 @@ const router = Router();
 router.post('/', (req, res)=> {
 
     const {artist, album, rating, comment} = req.body;
-    
-    if (!artist || !album) {
-        return res.status(400).json({ error: 'Os campos "artist" e "album" são obrigatórios.' });
+
+    if ( typeof artist !== 'string'  || artist.trim().length === 0){
+        return res.status(400).json({
+            error: 'Artist is required.'
+        });
     }
-    db.run('INSERT INTO albums (artist, album, rating, comment) VALUES (?, ?, ?, ?)', [artist, album, rating, comment], function(err) {
-    if (err) {
-        console.error('Erro ao inserir álbum:', err.message);
-        return res.status(500).json({ error: err.message });
+    if (typeof album !== 'string' || album.trim().length ===0){
+        return res.status(400).json({
+            error: 'Album is required'
+        });
     }
-    res.status(201).json({ id: this.lastID, message: 'Álbum adicionado com sucesso!' });
-});});
+    if (!Number.isInteger(rating) || rating < 0 || rating > 10){
+        return res.status(400).json({
+            error: 'Rating must be between 0 and 10'
+        });
+    }
+    if (typeof comment === 'string' && comment.length > 500){
+        return res.status(400).json({
+            error: 'Comment must have at most 500 characters.'
+        });
+    }
+    if (comment !== null && typeof comment !== 'string'){
+        return res.status(400).json({
+            error: 'Comment must be a string'
+        });
+    }
+
+db.run (`INSERT INTO albums (artist, album, rating, comment)
+    VALUES(?,?,?,?)`,
+[   artist.trim(),
+    album.trim(),
+    rating,
+    comment?.trim() || null
+],
+function (error){
+    if (error){
+        console.log ('Error creating album:', error.message);
+        return res.status(500).json({
+            error: 'Could not create album.'
+        });
+    }
+return res.status(201).json({
+    id: this.lastID,
+    message: 'Album create successfully.'});
+        }
+    );
+});
 
 
 
