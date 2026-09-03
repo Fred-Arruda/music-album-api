@@ -9,7 +9,7 @@ Entidades num primeiro momento:
 Endpoints:
 -POST /artista
 -GET /artista
--POST /album
--GET /album
+-POST /albuns
+-GET /albuns
 -POST /note
 -GET /nota
