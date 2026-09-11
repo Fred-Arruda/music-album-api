@@ -57,11 +57,35 @@ return res.status(201).json({
 
 
 
-router.get('/', (req, res) => {
-    db.all('SELECT * FROM albums', [], (err, rows) => {
-        if (err) { return res.status(500).json({error: err.message}); }
-        res.json(rows);
-    });
+
+
+router.get('/:id', (req, res) => {
+    const id = Number(req.params.id);
+
+    if (!Number.isInteger(id) || id <= 0){
+        return res.status(400).json({
+            error: 'ID must be a positive integer.'
+        });
+    }
+    db.get(
+        'SELECT * FROM albums WHERE id = ?',
+        [id],
+        (error,album) => {
+            if (error){
+                console.log('Error finding album:', error.message);
+
+                return res.status(500).json ({
+                    error: 'Could not find album.'
+                });
+            }
+            if (!album){
+                return res.status(404).json({
+                    error: 'Album not found.'
+                });
+            }
+            return res.status(200).json(album);
+        }
+    );
 });
 
 export default router;
