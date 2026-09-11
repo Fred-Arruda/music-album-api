@@ -55,6 +55,12 @@ return res.status(201).json({
 });
 
 
+router.get('/', (req, res) => {
+    db.all('SELECT * FROM albums', [], (err, rows) => {
+        if (err) { return res.status(500).json({error: err.message}); }
+        res.json(rows);
+    });
+});
 
 
 
