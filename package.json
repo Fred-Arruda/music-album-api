@@ -1,6 +1,6 @@
 {
-  "name": "teste-de-api-com-sqlite",
-  "version": "1.0.0",
+  "name": "Music API",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
