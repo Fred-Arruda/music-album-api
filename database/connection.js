@@ -1,13 +1,16 @@
-import sqlite3 from 'sqlite3';
+import sqlite3 from "sqlite3";
 
-const db = new sqlite3.Database('./banco.db', (error) => {
-  if (error) {
-    console.error('Database connection failed:', error.message);
-    return;
-  }
+const db = new sqlite3.Database(
+  process.env.DB_PATH || "./banco.db",
+  (error) => {
+    if (error) {
+      console.error("Database connection failed:", error.message);
+      return;
+    }
 
-  console.log('Connected to SQLite database');
-});
+    console.log("Connected to SQLite database");
+  },
+);
 
 export function initializeDatabase() {
   const query = `
@@ -27,7 +30,7 @@ export function initializeDatabase() {
         return;
       }
 
-      console.log('Database initialized');
+      console.log("Database initialized");
       resolve();
     });
   });

@@ -2,7 +2,7 @@ import express from "express";
 import albumRouter from "./routes/albuns.js";
 import { initializeDatabase } from "./database/connection.js";
 
-const port = 3000;
+const port = Number(process.env.PORT) || 3000;
 const app = express();
 app.use(express.json());
 app.use("/albums", albumRouter);
