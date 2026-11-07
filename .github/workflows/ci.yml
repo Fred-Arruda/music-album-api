@@ -1,0 +1,42 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Menor privilégio possível: o job só precisa ler o código.
+permissions:
+  contents: read
+
+# Um push novo na mesma branch cancela a execução anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Testes (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: ["22.x", "24.x"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configurar Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Rodar testes
+        run: npm test
