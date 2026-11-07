@@ -4,26 +4,39 @@ on:
   push:
     branches: [main]
   pull_request:
+    branches: [main]
+
+# Menor privilégio possível: o job só precisa ler o código.
+permissions:
+  contents: read
+
+# Um push novo na mesma branch cancela a execução anterior.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
+    name: Testes (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
-    steps:
-      - name: Baixar o código
-        uses: actions/checkout@v4
+        node-version: ["22.x", "24.x"]
 
-      - name: Instalar o Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Configurar Node
+        uses: actions/setup-node@v5
         with:
           node-version: ${{ matrix.node-version }}
+          cache: npm
 
       - name: Instalar dependências
-        run: |
-          if [ -f package-lock.json ]; then npm ci; else npm install; fi
+        run: npm ci
 
-      - name: Rodar os testes
+      - name: Rodar testes
         run: npm test
